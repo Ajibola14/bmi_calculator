@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:bmi_calc/resultCalc.dart';
+import 'package:bmi_calc/bmi_calculator.dart';
 import 'package:flutter/material.dart';
 
 import 'results.dart';
@@ -35,18 +35,20 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
+BmiCalculator bmiCalculator = BmiCalculator();
+
 class _HomeState extends State<Home> {
   Timer? timer;
-  BmiCalculator bmiCalculator = BmiCalculator();
-  
+
   GenderSelection selection = GenderSelection.Male;
-  double _height = 175;
-  double _weight = 70;
-  int _age = 25;
+  double _height = bmiCalculator.heightInCm;
+  double _weight = bmiCalculator.weightInKg;
+  int _age = bmiCalculator.age;
   @override
   void initState() {
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -142,8 +144,7 @@ class _HomeState extends State<Home> {
                     textBaseline: TextBaseline.alphabetic,
                     children: [
                       Text(
-                        // .round().toString(),
-                        "",
+                        _height.round().toString(),
                         style: TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.w700,
@@ -172,6 +173,7 @@ class _HomeState extends State<Home> {
                       onChanged: (newvalue) {
                         setState(() {
                           _height = newvalue;
+                          bmiCalculator.setHeight(_height);
                         });
                       })
                 ],
@@ -352,23 +354,21 @@ class _HomeState extends State<Home> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: OutlinedButton(
-                onPressed: null,
-                  // onPressed: () {
-                  //   Navigator.push(context, MaterialPageRoute(
-                  //     builder: (context) {
-                  //       BmiCalculator bmiCalc =
-                  //           // BmiCalculator(height: _height, weight: _weight);
-                  //       // String weightStatus = bmiCalc.weightStatus;
-                  //       // String bmi = bmiCalc.calculate();
-                  //       // Color color = bmiCalc.bmiColor(bmi);
-                  //       return ResultsPage(
-                  //         bmi: bmi,
-                  //         weightStatus: "",
-                  //         color: color,
-                  //       );
-                  //     },
-                  //   ));
-                  // },
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) {
+                        String bmi = bmiCalculator.calculate();
+                        String weightStatus = bmiCalculator.weightStatus;
+                        Color color = bmiCalculator.bmiColor(bmi);
+                        print(bmi);
+                        return ResultsPage(
+                          bmi: bmi,
+                          weightStatus: weightStatus,
+                          color: color,
+                        );
+                      },
+                    ));
+                  },
                   style: OutlinedButton.styleFrom(
                       minimumSize: Size(double.infinity, 40),
                       shape: StadiumBorder(),
@@ -387,6 +387,7 @@ class _HomeState extends State<Home> {
       setState(() {
         _age--;
       });
+      bmiCalculator.setAge(_age);
     }
   }
 
@@ -395,6 +396,7 @@ class _HomeState extends State<Home> {
       setState(() {
         _age++;
       });
+      bmiCalculator.setAge(_age);
     }
   }
 
@@ -403,6 +405,7 @@ class _HomeState extends State<Home> {
       setState(() {
         _weight--;
       });
+      bmiCalculator.setWeight(_weight);
     }
   }
 
@@ -410,6 +413,7 @@ class _HomeState extends State<Home> {
     if (_weight < 1500) {
       setState(() {
         _weight++;
+        bmiCalculator.setWeight(_weight);
       });
     }
   }
