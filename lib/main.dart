@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:bmi_calc/resultCalc.dart';
 import 'package:flutter/material.dart';
 
 import 'results.dart';
@@ -33,10 +36,17 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  Timer? timer;
+  BmiCalculator bmiCalculator = BmiCalculator();
+  
   GenderSelection selection = GenderSelection.Male;
-  double _height = 100;
+  double _height = 175;
   double _weight = 70;
-  int _age = 30;
+  int _age = 25;
+  @override
+  void initState() {
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -95,12 +105,10 @@ class _HomeState extends State<Home> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Container(
-                            child: Icon(
-                              Icons.female,
-                              size: 80,
-                              color: Colors.white,
-                            ),
+                          Icon(
+                            Icons.female,
+                            size: 80,
+                            color: Colors.white,
                           ),
                           Text(
                             "FEMALE",
@@ -134,7 +142,8 @@ class _HomeState extends State<Home> {
                     textBaseline: TextBaseline.alphabetic,
                     children: [
                       Text(
-                        _height.round().toString(),
+                        // .round().toString(),
+                        "",
                         style: TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.w700,
@@ -158,7 +167,8 @@ class _HomeState extends State<Home> {
                       thumbColor: Colors.purple[300],
                       activeColor: Colors.white,
                       value: _height,
-                      max: 120,
+                      max: 272,
+                      min: 55,
                       onChanged: (newvalue) {
                         setState(() {
                           _height = newvalue;
@@ -214,9 +224,16 @@ class _HomeState extends State<Home> {
                                   borderRadius: BorderRadius.circular(10)),
                               child: GestureDetector(
                                 onTap: () {
-                                  setState(() {
-                                    _weight++;
+                                  _increaseWeight();
+                                },
+                                onLongPress: () {
+                                  timer = Timer.periodic(
+                                      Duration(milliseconds: 10), (timer) {
+                                    _increaseWeight();
                                   });
+                                },
+                                onLongPressUp: () {
+                                  timer?.cancel();
                                 },
                                 child: Icon(
                                   Icons.add,
@@ -233,9 +250,16 @@ class _HomeState extends State<Home> {
                                   borderRadius: BorderRadius.circular(10)),
                               child: GestureDetector(
                                 onTap: () {
-                                  setState(() {
-                                    _weight--;
+                                  _decreaseWeight();
+                                },
+                                onLongPress: () {
+                                  timer = Timer.periodic(
+                                      Duration(milliseconds: 10), (timer) {
+                                    _decreaseWeight();
                                   });
+                                },
+                                onLongPressUp: () {
+                                  timer?.cancel();
                                 },
                                 child: Icon(
                                   Icons.remove,
@@ -274,9 +298,16 @@ class _HomeState extends State<Home> {
                                   borderRadius: BorderRadius.circular(10)),
                               child: GestureDetector(
                                 onTap: () {
-                                  setState(() {
-                                    _age++;
+                                  _increaseAge();
+                                },
+                                onLongPress: () {
+                                  timer = Timer.periodic(
+                                      Duration(milliseconds: 100), (timer) {
+                                    _increaseAge();
                                   });
+                                },
+                                onLongPressUp: () {
+                                  timer?.cancel();
                                 },
                                 child: Icon(
                                   Icons.add,
@@ -293,9 +324,16 @@ class _HomeState extends State<Home> {
                                   borderRadius: BorderRadius.circular(10)),
                               child: GestureDetector(
                                 onTap: () {
-                                  setState(() {
-                                    _age--;
+                                  _decreaseAge();
+                                },
+                                onLongPress: () {
+                                  timer = Timer.periodic(
+                                      Duration(milliseconds: 100), (timer) {
+                                    _decreaseAge();
                                   });
+                                },
+                                onLongPressUp: () {
+                                  timer?.cancel();
                                 },
                                 child: Icon(
                                   Icons.remove,
@@ -314,13 +352,23 @@ class _HomeState extends State<Home> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: OutlinedButton(
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(
-                      builder: (context) {
-                        return ResultsPage();
-                      },
-                    ));
-                  },
+                onPressed: null,
+                  // onPressed: () {
+                  //   Navigator.push(context, MaterialPageRoute(
+                  //     builder: (context) {
+                  //       BmiCalculator bmiCalc =
+                  //           // BmiCalculator(height: _height, weight: _weight);
+                  //       // String weightStatus = bmiCalc.weightStatus;
+                  //       // String bmi = bmiCalc.calculate();
+                  //       // Color color = bmiCalc.bmiColor(bmi);
+                  //       return ResultsPage(
+                  //         bmi: bmi,
+                  //         weightStatus: "",
+                  //         color: color,
+                  //       );
+                  //     },
+                  //   ));
+                  // },
                   style: OutlinedButton.styleFrom(
                       minimumSize: Size(double.infinity, 40),
                       shape: StadiumBorder(),
@@ -332,5 +380,37 @@ class _HomeState extends State<Home> {
         ),
       ),
     );
+  }
+
+  void _decreaseAge() {
+    if (_age > 1) {
+      setState(() {
+        _age--;
+      });
+    }
+  }
+
+  void _increaseAge() {
+    if (_age < 120) {
+      setState(() {
+        _age++;
+      });
+    }
+  }
+
+  void _decreaseWeight() {
+    if (_weight > 1) {
+      setState(() {
+        _weight--;
+      });
+    }
+  }
+
+  void _increaseWeight() {
+    if (_weight < 1500) {
+      setState(() {
+        _weight++;
+      });
+    }
   }
 }
