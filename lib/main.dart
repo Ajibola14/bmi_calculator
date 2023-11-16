@@ -359,7 +359,7 @@ class _HomeState extends State<Home> {
                       builder: (context) {
                         String bmi = bmiCalculator.calculate();
                         String weightStatus = bmiCalculator.weightStatus;
-                        Color color = bmiCalculator.bmiColor(bmi);
+                        Color color = bmiCalculator.bmiColor();
                         print(bmi);
                         return ResultsPage(
                           bmi: bmi,
